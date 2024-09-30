@@ -23,12 +23,31 @@ resource "google_sql_database_instance" "database" {
     edition         = "ENTERPRISE"
     disk_size       = "10"
     disk_autoresize = false
+
+    ip_configuration {
+      authorized_networks {
+        name  = "Allow all"
+        value = "0.0.0.0/0"
+      }
+    }
   }
 }
 
-resource "google_sql_user" "user" {
+resource "google_sql_database" "db" {
+  name     = "monolith"
+  instance = google_sql_database_instance.database.name
+}
+
+resource "google_sql_user" "root_user" {
   name     = "root"
   instance = google_sql_database_instance.database.name
   host     = "%"
   password = var.cloud_sql_root_password
+}
+
+resource "google_sql_user" "monolith_user" {
+  name     = "monolith"
+  instance = google_sql_database_instance.database.name
+  host     = "%"
+  password = var.cloud_sql_monolith_password
 }
