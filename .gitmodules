@@ -1,3 +1,7 @@
 [submodule "auth-fn"]
 	path = auth-fn
 	url = git@github.com:marcostmunhoz/fiap-tech-challenge-fastfood-auth-fn.git
+[submodule "monolith"]
+	path = monolith
+	url = git@github.com:marcostmunhoz/fiap-tech-challenge-fastfood-monolith.git
+	branch = release/fase-3
