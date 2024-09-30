@@ -32,12 +32,12 @@ jobs:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -var="cloud_sql_root_password=${{ secrets.CLOUD_SQL_ROOT_PASSWORD }}" -var="cloud_sql_monolith_password=${{ secrets.CLOUD_SQL_MONOLITH_PASSWORD }}"
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false
+        run: terraform apply -auto-approve -var="cloud_sql_root_password=${{ secrets.CLOUD_SQL_ROOT_PASSWORD }}" -var="cloud_sql_monolith_password=${{ secrets.CLOUD_SQL_MONOLITH_PASSWORD }}"
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
