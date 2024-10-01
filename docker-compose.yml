@@ -1,0 +1,85 @@
+services:
+  db:
+    build:
+      context: ./monolith/docker/db
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - '3306:3306'
+    networks:
+      - default
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./monolith/docker/db/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      # Check for the testing database to be ready, meaning the entrypoint script finished running
+      test: mysql testing -uroot -proot --silent --execute "select 1;"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: secret
+
+  monolith:
+    build:
+      context: ./monolith
+      dockerfile: ./docker/app/Dockerfile
+      target: dev
+    ports:
+      - '3000:3000'
+    networks:
+      - default
+    volumes:
+      - ./monolith/src:/app/src
+      - ./monolith/config:/app/config
+      - ./monolith/migrations/:/app/migrations
+      - ./monolith/test:/app/test
+      - ./monolith/.env:/app/.env
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # App settings
+      HOST: 0.0.0.0
+      PORT: 3000
+      JWT_SECRET: secret
+      # Database settings
+      MYSQL_DATABASE_HOST: db
+      MYSQL_DATABASE_PORT: 3306
+      MYSQL_DATABASE_USERNAME: app
+      MYSQL_DATABASE_PASSWORD: secret
+      MYSQL_DATABASE_TESTING_NAME: testing
+      MYSQL_DATABASE_NAME: app
+      MYSQL_DATABASE_LOGGING: true
+
+  auth-fn:
+    build:
+      context: ./auth-fn
+      dockerfile: ./docker/app/Dockerfile
+      target: dev
+    ports:
+      - '8080:8080'
+    networks:
+      - default
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # App settings
+      JWT_SECRET: secret
+      # Database settings
+      MYSQL_DATABASE_HOST: db
+      MYSQL_DATABASE_PORT: 3306
+      MYSQL_DATABASE_USERNAME: app
+      MYSQL_DATABASE_PASSWORD: secret
+      MYSQL_DATABASE_NAME: app
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  db-data:

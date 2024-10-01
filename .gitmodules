@@ -4,7 +4,6 @@
 [submodule "monolith"]
 	path = monolith
 	url = git@github.com:marcostmunhoz/fiap-tech-challenge-fastfood-monolith.git
-	branch = release/fase-3
 [submodule "k8s"]
 	path = k8s
 	url = git@github.com:marcostmunhoz/fiap-tech-challenge-fastfood-k8s.git
