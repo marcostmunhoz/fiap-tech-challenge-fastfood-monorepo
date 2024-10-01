@@ -1,3 +1,7 @@
+output "cloud_sql_instance_ip" {
+  value = google_sql_database_instance.database.public_ip_address
+}
+
 resource "google_storage_bucket" "bucket" {
   name                        = "${local.google.project}-bucket"
   location                    = local.google.location
