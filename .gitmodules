@@ -7,3 +7,9 @@
 [submodule "k8s"]
 	path = k8s
 	url = git@github.com:marcostmunhoz/fiap-tech-challenge-fastfood-k8s.git
+[submodule "libs"]
+	path = libs
+	url = git@github.com:marcostmunhoz/fiap-tech-challenge-fastfood-libs.git
+[submodule "kitchen"]
+	path = kitchen
+	url = git@github.com:marcostmunhoz/fiap-tech-challenge-fastfood-kitchen-ms.git
