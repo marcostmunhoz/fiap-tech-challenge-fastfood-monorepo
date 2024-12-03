@@ -13,7 +13,7 @@ services:
       - ./docker/mysql/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       # Check for the testing database to be ready, meaning the entrypoint script finished running
-      test: mysql testing -uroot -proot --silent --execute "select 1;"
+      test: mysql auth -uroot -proot --silent --execute "select 1;"
       interval: 10s
       timeout: 5s
       retries: 5
@@ -65,7 +65,7 @@ services:
       MYSQL_DATABASE_PORT: 3306
       MYSQL_DATABASE_USERNAME: app
       MYSQL_DATABASE_PASSWORD: secret
-      MYSQL_DATABASE_NAME: app
+      MYSQL_DATABASE_NAME: auth
 
   kitchen:
     build:
