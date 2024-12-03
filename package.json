@@ -1,0 +1,18 @@
+{
+  "name": "tech-challenge",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:marcostmunhoz/fiap-tech-challenge-fastfood-monorepo.git",
+  "author": "Marcos T Munhoz <3648104+marcostmunhoz@users.noreply.github.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.10.1"
+  },
+  "scripts": {},
+  "dependencies": {
+    "@faker-js/faker": "^9.2.0",
+    "dotenv": "^16.4.6",
+    "gerador-validador-cpf": "^5.0.2"
+  }
+}
