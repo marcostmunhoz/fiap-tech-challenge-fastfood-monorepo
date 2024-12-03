@@ -1,8 +1,8 @@
-name: 'Terraform'
+name: "Terraform"
 
 on:
   push:
-    branches: ['main']
+    branches: ["main"]
   pull_request:
 
 permissions:
@@ -26,18 +26,22 @@ jobs:
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+      - name: Decode terraform.tfvars
+        run: |
+          echo "${{ secrets.TF_VARS_BASE64 }}" | base64 --decode > terraform.tfvars
+
       - name: Terraform Init
         run: terraform init --backend-config="encryption_key=${{ secrets.TF_ENCRYPTION_KEY }}"
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: Terraform Plan
-        run: terraform plan -var="cloud_sql_root_password=${{ secrets.CLOUD_SQL_ROOT_PASSWORD }}" -var="cloud_sql_monolith_password=${{ secrets.CLOUD_SQL_MONOLITH_PASSWORD }}"
+        run: terraform plan -var-file=terraform.tfvars
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -var="cloud_sql_root_password=${{ secrets.CLOUD_SQL_ROOT_PASSWORD }}" -var="cloud_sql_monolith_password=${{ secrets.CLOUD_SQL_MONOLITH_PASSWORD }}"
+        run: terraform apply -auto-approve -var-file=terraform.tfvars
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
