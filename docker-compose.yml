@@ -161,6 +161,25 @@ services:
       DATABASE_TESTING_NAME: testing
       DATABASE_NAME: payment
 
+  webhook:
+    build:
+      context: ./payment/docker/webhook
+      dockerfile: ./Dockerfile
+    networks:
+      - default
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      # App settings
+      WEBHOOK_URL: http://payment:3000/api/v1/payments/invoice-event
+      # Database settings
+      DATABASE_HOST: mongodb
+      DATABASE_PORT: 27017
+      DATABASE_USERNAME: payment
+      DATABASE_PASSWORD: secret
+      DATABASE_NAME: payment
+
 networks:
   default:
     driver: bridge

@@ -4,8 +4,20 @@ variable "cloud_sql_root_password" {
   sensitive   = true
 }
 
-variable "cloud_sql_monolith_password" {
-  description = "The monolith password for the Cloud SQL instance."
+variable "cloud_sql_kitchen_password" {
+  description = "The kitchen password for the Cloud SQL instance."
+  type        = string
+  sensitive   = true
+}
+
+variable "cloud_sql_order_password" {
+  description = "The order password for the Cloud SQL instance."
+  type        = string
+  sensitive   = true
+}
+
+variable "cloud_sql_auth_password" {
+  description = "The auth password for the Cloud SQL instance."
   type        = string
   sensitive   = true
 }

@@ -37,11 +37,6 @@ resource "google_sql_database_instance" "database" {
   }
 }
 
-resource "google_sql_database" "db" {
-  name     = "monolith"
-  instance = google_sql_database_instance.database.name
-}
-
 resource "google_sql_user" "root_user" {
   name     = "root"
   instance = google_sql_database_instance.database.name
@@ -49,9 +44,38 @@ resource "google_sql_user" "root_user" {
   password = var.cloud_sql_root_password
 }
 
-resource "google_sql_user" "monolith_user" {
-  name     = "monolith"
+resource "google_sql_database" "kitchen_db" {
+  name     = "kitchen"
+  instance = google_sql_database_instance.database.name
+}
+
+resource "google_sql_user" "kitchen_user" {
+  name     = "kitchen"
   instance = google_sql_database_instance.database.name
   host     = "%"
-  password = var.cloud_sql_monolith_password
+  password = var.cloud_sql_kitchen_password
+}
+
+resource "google_sql_database" "order_db" {
+  name     = "order"
+  instance = google_sql_database_instance.database.name
+}
+
+resource "google_sql_user" "order_user" {
+  name     = "order"
+  instance = google_sql_database_instance.database.name
+  host     = "%"
+  password = var.cloud_sql_order_password
+}
+
+resource "google_sql_database" "auth_db" {
+  name     = "auth"
+  instance = google_sql_database_instance.database.name
+}
+
+resource "google_sql_user" "auth_user" {
+  name     = "auth"
+  instance = google_sql_database_instance.database.name
+  host     = "%"
+  password = var.cloud_sql_auth_password
 }
