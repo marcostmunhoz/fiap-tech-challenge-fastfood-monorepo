@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
       target: dev
     ports:
-      - '3306:3306'
+      - "3306:3306"
     networks:
       - default
     volumes:
@@ -29,7 +29,7 @@ services:
       dockerfile: Dockerfile
       target: dev
     ports:
-      - '27017:27017'
+      - "27017:27017"
     networks:
       - default
     volumes:
@@ -45,45 +45,13 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
       MONGO_INITDB_DATABASE: default
 
-  monolith:
-    build:
-      context: ./monolith
-      dockerfile: ./docker/app/Dockerfile
-      target: dev
-    ports:
-      - '3000:3000'
-    networks:
-      - default
-    volumes:
-      - ./monolith/src:/app/src
-      - ./monolith/config:/app/config
-      - ./monolith/migrations/:/app/migrations
-      - ./monolith/test:/app/test
-      - ./monolith/.env:/app/.env
-    depends_on:
-      mysql:
-        condition: service_healthy
-    environment:
-      # App settings
-      HOST: 0.0.0.0
-      PORT: 3000
-      JWT_SECRET: secret
-      # Database settings
-      MYSQL_DATABASE_HOST: mysql
-      MYSQL_DATABASE_PORT: 3306
-      MYSQL_DATABASE_USERNAME: app
-      MYSQL_DATABASE_PASSWORD: secret
-      MYSQL_DATABASE_TESTING_NAME: testing
-      MYSQL_DATABASE_NAME: app
-      MYSQL_DATABASE_LOGGING: true
-
   auth-fn:
     build:
       context: ./auth-fn
       dockerfile: ./docker/app/Dockerfile
       target: dev
     ports:
-      - '8080:8080'
+      - "8080:8080"
     networks:
       - default
     depends_on:
@@ -105,7 +73,7 @@ services:
       dockerfile: ./docker/app/Dockerfile
       target: dev
     ports:
-      - '3001:3000'
+      - "3001:3000"
     networks:
       - default
     volumes:
@@ -136,7 +104,7 @@ services:
       dockerfile: ./docker/app/Dockerfile
       target: dev
     ports:
-      - '3002:3000'
+      - "3002:3000"
     networks:
       - default
     volumes:
@@ -168,7 +136,7 @@ services:
       dockerfile: ./docker/app/Dockerfile
       target: dev
     ports:
-      - '3003:3000'
+      - "3003:3000"
     networks:
       - default
     volumes:
