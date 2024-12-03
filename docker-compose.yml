@@ -23,6 +23,28 @@ services:
       MYSQL_USER: app
       MYSQL_PASSWORD: secret
 
+  mongodb:
+    build:
+      context: ./docker/mongodb
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - '27017:27017'
+    networks:
+      - default
+    volumes:
+      - mongodb-data:/data/db
+      - ./docker/mongodb/scripts/init.js:/docker-entrypoint-initdb.d/init.js
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh admin -u root -p root --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: default
+
   monolith:
     build:
       context: ./monolith
@@ -93,17 +115,83 @@ services:
         condition: service_healthy
     environment:
       # App settings
+      NODE_ENV: development
       HOST: 0.0.0.0
       PORT: 3000
       JWT_SECRET: secret
       # Database settings
+      DATABASE_TYPE: mysql
+      DATABASE_LOGGING: true
+      DATABASE_SYNCHRONIZE: true
       MYSQL_DATABASE_HOST: mysql
       MYSQL_DATABASE_PORT: 3306
       MYSQL_DATABASE_USERNAME: app
       MYSQL_DATABASE_PASSWORD: secret
       MYSQL_DATABASE_TESTING_NAME: testing
-      MYSQL_DATABASE_NAME: app
-      MYSQL_DATABASE_LOGGING: true
+      MYSQL_DATABASE_NAME: kitchen
+
+  order:
+    build:
+      context: ./order
+      dockerfile: ./docker/app/Dockerfile
+      target: dev
+    ports:
+      - '3002:3000'
+    networks:
+      - default
+    volumes:
+      - ./order/src:/app/src
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # App settings
+      NODE_ENV: development
+      HOST: 0.0.0.0
+      PORT: 3000
+      JWT_SECRET: secret
+      PRODUCT_SERVICE_URL: http://kitchen:3000
+      # Database settings
+      DATABASE_TYPE: mysql
+      DATABASE_LOGGING: true
+      DATABASE_SYNCRONIZE: true
+      MYSQL_DATABASE_HOST: mysql
+      MYSQL_DATABASE_PORT: 3306
+      MYSQL_DATABASE_USERNAME: app
+      MYSQL_DATABASE_PASSWORD: secret
+      MYSQL_DATABASE_TESTING_NAME: testing
+      MYSQL_DATABASE_NAME: order
+
+  payment:
+    build:
+      context: ./payment
+      dockerfile: ./docker/app/Dockerfile
+      target: dev
+    ports:
+      - '3003:3000'
+    networks:
+      - default
+    volumes:
+      - ./payment/src:/app/src
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      # App settings
+      NODE_ENV: development
+      HOST: 0.0.0.0
+      PORT: 3000
+      JWT_SECRET: secret
+      ORDER_SERVICE_URL: http://order:3000
+      # Database settings
+      DATABASE_TYPE: mongodb
+      DATABASE_LOGGING: true
+      DATABASE_HOST: mongodb
+      DATABASE_PORT: 27017
+      DATABASE_USERNAME: payment
+      DATABASE_PASSWORD: secret
+      DATABASE_TESTING_NAME: testing
+      DATABASE_NAME: payment
 
 networks:
   default:
@@ -111,3 +199,4 @@ networks:
 
 volumes:
   mysql-data:
+  mongodb-data:
